@@ -1,9 +1,9 @@
 # Huong dan Git
 ## Kieu chu
 **in dam**
-_nghieng
+_nghieng_
 **_dam nghieng_**
-'test markdown'
+`test markdown`
 
 ## List
 - text 1
@@ -12,4 +12,9 @@ _nghieng
 2. text 2
 
 ## Link
-markdown [link](google.com)
+[google](google.com)
+
+## Code
+```abc
+xyz
+123```
