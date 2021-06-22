@@ -1,6 +1,6 @@
 # Virtualization
 Hay còn gọi là ảo hóa, là một công nghệ được nằm ở tầng trung gian giữa hệ thống phần cứng máy tính và phần mềm chạy trên nó.
-Cho phép sử dụng tối đa công suất của phần cứng hoặc một máy tính vật lý bằng cách phân phối cho nhiều người dùng hoặc nhiều môi trường độc lập.
+Cho phép sử dụng tối đa công suất của ổ cứng hoặc một máy tính vật lý bằng cách phân phối cho nhiều người dùng hoặc nhiều môi trường độc lập.
 
 Ví dụ:
 - Có 3 server vật lý riêng biệt với những chức năng riêng của nó là: mail server, web server và các lagacy app nội bộ
@@ -14,4 +14,10 @@ Ví dụ:
 ![image](https://user-images.githubusercontent.com/83684068/122864482-ebafaa00-d34e-11eb-8f77-6cd22d4f5e8a.png)
 
 - Như vậy sẽ giảm được chi phí về phần cứng, chi phí bảo trì và làm mát cho các hệ thống server
+
+**4 mục tiêu chính của ảo hóa**
+- Availability: giúp các ứng dụng hoạt động liên tục bằng cách giảm thiểu, loại bỏ downtime khi gặp sự cố
+- Scalability: khả năng tùy biến, thu hẹp hoặc mở rộng mô hình server dễ dàng mà không làm gián đoạn ứng dụng
+- Optimization: sử dụng triệt để nguồn tài nguyên phần cứng và tránh lãng phí 
+- Management: khả năng quản lý tập trung thuận tiện
 
