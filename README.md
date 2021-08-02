@@ -10,6 +10,9 @@
     |     |      |
     |     |      |
     
+    sed -i 's/prohibit-password/yes/g; s/#PermitRootLogin/PermitRootLogin/g;' /etc/ssh/sshd_config | service ssh restart
+
+    
     
   
 # Huong dan Git
