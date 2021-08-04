@@ -12,7 +12,14 @@
     
     sed -i 's/prohibit-password/yes/g; s/#PermitRootLogin/PermitRootLogin/g;' /etc/ssh/sshd_config | service ssh restart
 
-    
+    cat << EOF >> ceph.conf
+    public network = 10.10.10.0/24
+    cluster network = 10.10.11.0/24
+    osd objectstore = bluestore
+    mon_allow_pool_delete = true
+    osd pool default size = 3
+    osd pool default min size = 1
+    EOF
     
   
 # Huong dan Git
