@@ -20,7 +20,11 @@
     osd pool default size = 3
     osd pool default min size = 1
     EOF
-    
+
+#### aa
+### a
+##### a
+
 Trên thực tế, các OSD thuộc nhiều host có thể bị lỗi cùng một lúc. Quá trình phục hồi có thể sẽ gây nghẽn mạng hoặc ảnh hưởng tới việc phục vụ dữ liệu tới client. Ceph đưa ra một số tuỳ chỉnh sau để cân bằng những yếu tố trên:
 - `osd recovery delay start` sau khi quá trình re-peer hoàn tất, sẽ delay một khoảng thời gian (second) rồi mới tiến hành recover object.
 - `osd recovery thread timeout` set timeout cho 1 quá trình recovery
