@@ -10,7 +10,7 @@
     |     |      |
     |     |      |
     
-    sed -i 's/prohibit-password/yes/g; s/#PermitRootLogin/PermitRootLogin/g;' /etc/ssh/sshd_config && service ssh restart
+    sed -i 's/prohibit-password/yes/g; s/#PermitRootLogin/PermitRootLogin/g;' /etc/ssh/sshd_config && systemctl restart ssh[d]
 
     cat << EOF >> ceph.conf
     public network = 10.10.10.0/24
