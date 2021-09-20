@@ -28,18 +28,341 @@ Cấu hình trong `/etc/host"`:
     192   ceph01
     122   ceph02
 
-## 2. Cài đặt Openstack
+## 2. Cài đặt môi trường cho Openstack
 Timezone:
 
     yum -y install chrony
+    
 ### 2.1 Cài đặt các repo 
 
     yum install -y epel-release
     yum update -y
-    yum install -y centos-release-openstack-train  vim
+    yum install -y centos-release-openstack-train vim wget
     yum install -y python-openstackclient openstack-selinux 
     yum upgrade -y
+    
 ### 2.2 Cài đặt SQL database
 
     yum -y install mariadb mariadb-server python2-PyMySQL
+    
+Cấu hình Mariadb, tạo file `/etc/my.cnf.d/openstack.cnf` với nội dung sau:
+
+    [mysqld]
+    bind-address = [mngt net]
+
+    default-storage-engine = innodb
+    innodb_file_per_table = on
+    max_connections = 4096
+    collation-server = utf8_general_ci
+    character-set-server = utf8
+    
+Enable và start MySQL:
+
+    systemctl enable mariadb.service
+    systemctl start mariadb.service
+    
+Thiết lập mật khẩu cho tài khoản root của Mariadb:
+
+    mysql_secure_installation   
+    
+### 2.3 Cài đặt RabbitMQ
+
+    yum install rabbitmq-server -y
+  
+Enable và start rabbitmq-server:
+
+    systemctl start rabbitmq-server
+    systemctl enable rabbitmq-server
+    systemctl status rabbitmq-server
+
+Tạo user `openstack` với mật khẩu là `huy123` và gán quyền:
+
+    rabbitmqctl add_user openstack huy123
+    rabbitmqctl set_permissions openstack ".*" ".*" ".*"
+    rabbitmqctl set_user_tags openstack administrator
+    
+Kiểm tra user vừa tạo
+
+    rabbitmqadmin list users
+
+### 2.4 Cài đặt Memcached
+    
+    yum -y install memcached python-memcached
+
+Cấu hình Memcached nhận mngt net của ctl:
+
+    sed -i "s/-l 127.0.0.1,::1/-l [mngt net]/g" /etc/sysconfig/memcached
+    
+Enable và start memcached
+
+    systemctl enable memcached.service
+    systemctl start memcached.service
+
+## 3. Cài đặt Openstack
+### 3.1 Cài đặt Keystone
+#### 3.1.1 Tạo database cho Keystone
+Đăng nhập vào MySQL
+
+    mysql -u root -p
+    
+Tạo database cho keystone và cấp quyền truy cập:
+
+    CREATE DATABASE keystone;
+    GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost'  IDENTIFIED BY 'huy123';
+    GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'huy123';
+    FLUSH PRIVILEGES;
+    exit;
+    
+#### 3.1.2 Cài đặt và cấu hình keystone
+Cài đặt các package:
+
+    yum install -y openstack-keystone httpd mod_wsgi
+
+Sao lưu file cấu hình trước khi chỉnh sửa:
+
+    mv /etc/keystone/keystone.{conf,conf.backup}
+    
+Cấu hình `/etc/keystone/keystone.conf`:
+
+    [database]
+    connection = mysql+pymysql://keystone:huy123@ops/keystone
+    ...
+    [token]
+    provider = fernet
+
+Phân quyền lại config file
+
+    chown root:keystone /etc/keystone/keystone.conf
+    
+Đồng bộ database cho keystone
+
+    su -s /bin/sh -c "keystone-manage db_sync" keystone
+    
+Thiết lập Fernet key
+
+    keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+    keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
+
+Thiết lập boostrap cho Keystone
+
+    keystone-manage bootstrap --bootstrap-password huy123 \
+    --bootstrap-admin-url http://ops:5000/v3/ \
+    --bootstrap-internal-url http://ops:5000/v3/ \
+    --bootstrap-public-url http://ops:5000/v3/ \
+    --bootstrap-region-id RegionOne
+    
+#### 3.1.2 Cấu hình Apache cho Keystone
+Cấu hình server name trong `/etc/httpd/conf/httpd.conf`:
+
+    sed -i 's|#ServerName www.example.com:80|ServerName ops|g' /etc/httpd/conf/httpd.conf 
+    
+Tạo symlink cho keystone api:
+
+    ln -s /usr/share/keystone/wsgi-keystone.conf /etc/httpd/conf.d/
+    
+Start và enable Apache:
+
+    systemctl enable httpd.service
+    systemctl restart httpd.service
+
+#### 3.1.3 Tạo biến môi trường, domain, projects, users, và roles
+Tạo file biến môi trường `openrc-admin` cho tài khoản quản trị:
+
+    cat << EOF >> admin-openrc
+    export export OS_REGION_NAME=RegionOne
+    export OS_PROJECT_DOMAIN_NAME=Default
+    export OS_USER_DOMAIN_NAME=Default
+    export OS_PROJECT_NAME=admin
+    export OS_USERNAME=admin
+    export OS_PASSWORD=passla123
+    export OS_AUTH_URL=http://10.10.10.61:5000/v3
+    export OS_IDENTITY_API_VERSION=3
+    export OS_IMAGE_API_VERSION=2
+    export PS1='[\u@\h \W(admin-openrc-r1)]\$ '
+    EOF
+    
+Tạo file biến môi trường `openrc-demo` cho tài khoản demo:
+
+    cat << EOF >> demo-openrc
+    export export OS_REGION_NAME=RegionOne
+    export OS_PROJECT_DOMAIN_NAME=Default
+    export OS_USER_DOMAIN_NAME=Default
+    export OS_PROJECT_NAME=demo
+    export OS_USERNAME=demo
+    export OS_PASSWORD=passla123
+    export OS_AUTH_URL=http://10.10.10.61:5000/v3
+    export OS_IDENTITY_API_VERSION=3
+    export OS_IMAGE_API_VERSION=2
+    export PS1='[\u@\h \W(demo-openrc-r1)]\$ '
+    EOF
+
+Sử dụng biến môi trường
+
+    source admin-openrc 
+    
+Tạo service project:
+
+    openstack project create --domain default --description "Service Project" service
+    
+Tạo demo project:
+
+    openstack project create --domain default --description "Demo Project" demo
+    
+Tạo user `demo` và password `huy123`:
+
+    openstack user create --domain default --password huy123 demo
+    
+Tạo roles `user`:
+
+    openstack role create user
+    
+Thêm role `user` cho user `demo` trên project `demo`:
+
+    openstack role add --project demo --user demo user
+
+#### 3.1.4 Kiểm tra lại các bước cài đặt Keystone
+Unset các biến môi trường:
+
+    unset OS_AUTH_URL OS_PASSWORD
+    
+Kiểm tra xác thực trên project admin:
+
+    openstack --os-auth-url http://ops:5000/v3 --os-project-domain-name Default \
+    --os-user-domain-name Default --os-project-name admin --os-username admin token issue
+    
+Kiểm tra xác thực trên project demo:
+
+    openstack --os-auth-url http://ops:5000/v3 --os-project-domain-name default \
+    --os-user-domain-name default --os-project-name demo --os-username demo token issue
+
+Sau khi kiểm tra xác thực xong source lại biến môi trường:
+
+    source admin-openrc 
+    
+Nếu trong quá trình thao tác, xác thực token có vấn đề thì get lại token mới:
+
+    openstack token issue
+    
+### 3.2 Cài đặt Glance (Images Service)
+#### 3.2.1 Tạo database cho Glance
+Đăng nhập vào MySQL
+
+    mysql -u root -p
+    
+Tạo database cho keystone và cấp quyền truy cập:
+
+    CREATE DATABASE glance;
+    GRANT ALL PRIVILEGES ON glancee.* TO 'glance'@'localhost'  IDENTIFIED BY 'huy123';
+    GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' IDENTIFIED BY 'huy123';
+    FLUSH PRIVILEGES;
+    exit;
+
+#### 3.2.2 Tạo user glance, gán quyền và tạo endpoint API cho dịch vụ glance
+Sử dụng biến môi trường:
+
+    source admin-openrc
+    
+Tạo user `glance`:
+
+    openstack user create --domain default --password huy123 glance
+
+Thêm roles `admin` cho user `glance` trên project `service`:
+
+    openstack role add --project service --user glance admin
+
+Kiểm tra lại user `glance`:
+
+    openstack role list --user glance --project service
+
+Khởi tạo dịch vụ tên `glance`:
+
+    openstack service create --name glance --description "OpenStack Image" image
+
+Tạo các enpoint cho glane
+
+    openstack endpoint create --region RegionOne image public http://ops:9292
+    openstack endpoint create --region RegionOne image internal http://ops:9292
+    openstack endpoint create --region RegionOne image admin http://ops:9292
+
+#### 3.2.3 Cài đặt và cấu hình Glance
+Cài đặt package:
+
+    yum install -y openstack-glance
+    
+Backup 2 file cấu hình `glance-api` và `glance-registry`:
+
+    mv /etc/glance/glance-api.{conf,conf.backup}
+    mv /etc/glance/glance-registry.{conf,conf.bk}
+    
+Cấu hình file `/etc/glance/glance-api.conf`:
+
+    ...
+    [database]
+    connection = mysql+pymysql://glance:huy123@ops/glance
+    [glance_store]
+    stores = file,http
+    default_store = file
+    filesystem_store_datadir = /var/lib/glance/images/
+    ...
+    [keystone_authtoken]
+    auth_uri = http://ops:5000
+    auth_url = http://ops:5000
+    memcached_servers = ops:11211
+    auth_type = password
+    project_domain_name = Default
+    user_domain_name = Default
+    project_name = service
+    username = glance
+    password = huy123
+    region_name = RegionOne
+    ...
+    [paste_deploy]
+    flavor = keystone
+    
+Cấu hình file `/etc/glance/glance-registry.conf`:
+
+    [database]
+    connection = mysql+pymysql://glance:huy123@ops/glance
+    ...
+    [keystone_authtoken]
+    auth_uri = http://ops:5000
+    auth_url = http://ops:5000
+    memcached_servers = ops:11211
+    auth_type = password
+    project_domain_name = Default
+    user_domain_name = Default
+    project_name = service
+    username = glance
+    password = huy123
+    region_name = RegionOne
+    ...
+    [paste_deploy]
+    flavor = keystone
+    
+Phân quyền lại 2 file cấu hình:
+
+    chown root:glance /etc/glance/glance-api.conf
+    chown root:glance /etc/glance/glance-registry.conf
+    
+Đồng bộ database cho glance:
+
+    su -s /bin/sh -c "glance-manage db_sync" glance
+    
+Enable và restart Glance:
+
+    systemctl enable openstack-glance-api.service openstack-glance-registry.service
+    systemctl start openstack-glance-api.service openstack-glance-registry.service
+    
+#### 3.2.4 Kiểm tra lại cấu hình Glance
+Download image cirros:
+
+    wget http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
+    
+Upload image lên Glance:
+
+    openstack image create "cirros" --file cirros-0.3.5-x86_64-disk.img --disk-format qcow2 --container-format bare --public
+    
+Kiểm tra danh sách image:
+
+    openstack image list
     
