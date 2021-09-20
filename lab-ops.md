@@ -365,4 +365,132 @@ Upload image lên Glance:
 Kiểm tra danh sách image:
 
     openstack image list
+
+### 3.3 Cài đặt Nova (Compute Service)
+#### 3.3.1 Tạo database cho Nova
+Đăng nhập vào MySQL'
     
+    mysql -u root -p
+    
+Tạo database cho `nova_api`, `nov`, và `nova_cell0`:
+
+    CREATE DATABASE nova_api;
+    CREATE DATABASE nova;
+    CREATE DATABASE nova_cell0;
+
+Cấp quyền truy cập database:
+
+    GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY 'huy123';
+    GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY 'huy123';
+    
+    GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'localhost' IDENTIFIED BY 'huy123';
+    GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%' IDENTIFIED BY 'huy123';
+
+    GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'localhost' IDENTIFIED BY 'huy123';
+    GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'%' IDENTIFIED BY 'huy123';
+    FLUSH PRIVILEGES;
+    EXIT;
+
+#### 3.3.2 Tạo user, service và các endpoint API cho nova
+Sử dụng biến môi trường
+
+    source admin-openrc
+
+Tạo user `nova`
+
+    openstack user create --domain default --password huy123 nova
+
+Thêm role `admin` cho user `nova` trên project service:
+
+    openstack role add --project service --user nova admin
+
+Tạo dịch vụ `nova`:
+
+    openstack service create --name nova --description "OpenStack Compute" compute
+
+Tạo các endpoint cho dịch vụ compute
+
+    openstack endpoint create --region RegionOne compute public http://ops:8774/v2.1
+    openstack endpoint create --region RegionOne compute internal http://ops:8774/v2.1
+    openstack endpoint create --region RegionOne compute admin http://ops:8774/v2.1
+
+Tạo user `placement`:
+
+    openstack user create --domain default --password huy123 placement
+
+Thêm role `admin` cho user `placement` trên project service:
+
+    openstack role add --project service --user placement admin
+
+Tạo dịch vụ placement
+
+    openstack service create --name placement --description "Placement API" placement
+
+Tạo endpoint cho placement
+
+    openstack endpoint create --region RegionOne placement public http://ops:8778
+    openstack endpoint create --region RegionOne placement internal http://ops:8778
+    openstack endpoint create --region RegionOne placement admin http://ops:8778  
+
+#### 3.3.3 Cài đặt và cấu hình Nova
+Cài đặt package:
+
+    yum install -y openstack-nova-api openstack-nova-conductor openstack-nova-console \
+    openstack-nova-novncproxy openstack-nova-scheduler openstack-nova-placement-api
+
+Backup cấu hình Nova:
+    
+    mv /etc/nova/nova.{conf,conf.backup}
+    
+Sửa file `/etc/nova/nova.conf`:
+
+    [api_database]
+    connection = mysql+pymysql://nova:huy123@controller/nova_api
+    ...
+    [database]
+    connection = mysql+pymysql://nova:huy123@controller/nova
+    ...
+    [DEFAULT]
+    enabled_apis = osapi_compute,metadata
+    use_neutron = True
+    firewall_driver = nova.virt.firewall.NoopFirewallDriver
+    my_ip = ops
+    transport_url = rabbit://openstack:huy123@ops
+    ...
+    [api]
+    auth_strategy = keystone
+    ...
+    [keystone_authtoken]
+    auth_uri = http://ops:5000
+    auth_url = http://ops:35357
+    memcached_servers = ops:11211
+    auth_type = password
+    project_domain_name = default
+    user_domain_name = default
+    project_name = service
+    username = nova
+    password = huy123
+    ...
+    [vnc]
+    enabled = true
+    vncserver_listen = $my_ip
+    vncserver_proxyclient_address = $my_ip
+    ...
+    [glance]
+    api_servers = http://ops:9292
+    ...
+    [oslo_concurrency]
+    lock_path = /var/lib/nova/tmp
+    ...
+    [placement]
+    os_region_name = RegionOne
+    project_domain_name = Default
+    project_name = service
+    auth_type = password
+    user_domain_name = Default
+    auth_url = http://ops:35357/v3
+    username = placement
+    password = huy123
+### 3.3 Cài đặt Neutron (Network Service)
+
+### 3.3 Cài đặt Cinder (Block Service)
