@@ -437,18 +437,21 @@ Cài đặt package:
 
     yum install -y openstack-nova-api openstack-nova-conductor openstack-nova-console \
     openstack-nova-novncproxy openstack-nova-scheduler openstack-nova-placement-api
-
+    
+    yum install -y openstack-nova-compute
+    
 Backup cấu hình Nova:
     
-    mv /etc/nova/nova.{conf,conf.backup}
+    cp /etc/nova/nova.{conf,conf.backup}
+    cp /etc/httpd/conf.d/00-nova-placement-api.{conf,conf.bk}
     
 Sửa file `/etc/nova/nova.conf`:
 
     [api_database]
-    connection = mysql+pymysql://nova:huy123@controller/nova_api
+    connection = mysql+pymysql://nova:huy123@ops/nova_api
     ...
     [database]
-    connection = mysql+pymysql://nova:huy123@controller/nova
+    connection = mysql+pymysql://nova:huy123@ops/nova
     ...
     [DEFAULT]
     enabled_apis = osapi_compute,metadata
@@ -461,7 +464,7 @@ Sửa file `/etc/nova/nova.conf`:
     auth_strategy = keystone
     ...
     [keystone_authtoken]
-    auth_uri = http://ops:5000
+    www_authenticate_uri = http://ops:5000/
     auth_url = http://ops:35357
     memcached_servers = ops:11211
     auth_type = password
@@ -475,6 +478,7 @@ Sửa file `/etc/nova/nova.conf`:
     enabled = true
     vncserver_listen = $my_ip
     vncserver_proxyclient_address = $my_ip
+    novncproxy_base_url = http://ops:6080/vnc_auto.html
     ...
     [glance]
     api_servers = http://ops:9292
@@ -488,9 +492,76 @@ Sửa file `/etc/nova/nova.conf`:
     project_name = service
     auth_type = password
     user_domain_name = Default
-    auth_url = http://ops:35357/v3
+    auth_url = http://ops:5000/v3
     username = placement
     password = huy123
+    
+Cấu hình virtualhost cho nova placement tại `/etc/httpd/conf.d/00-nova-placement-api.conf`:
+
+    <Directory /usr/bin>
+       <IfVersion >= 2.4>
+          Require all granted
+       </IfVersion>
+       <IfVersion < 2.4>
+          Order allow,deny
+          Allow from all
+       </IfVersion>
+    </Directory>
+
+Cấu hình bind cho nova placement api trên httpd:
+
+    sed -i -e 's/VirtualHost \*/VirtualHost ops/g' /etc/httpd/conf.d/00-nova-placement-api.conf
+    sed -i -e 's/Listen 8778/Listen ops:8778/g' /etc/httpd/conf.d/00-nova-placement-api.conf
+
+Restart httpd:
+
+    systemctl restart httpd 
+    
+Import DB nova:
+
+    su -s /bin/sh -c "nova-manage api_db sync" nova
+    su -s /bin/sh -c "nova-manage cell_v2 map_cell0" nova
+    su -s /bin/sh -c "nova-manage cell_v2 create_cell --name=cell1 --verbose" nova 
+    su -s /bin/sh -c "nova-manage db sync" nova
+    
+Check nova cell
+
+    nova-manage cell_v2 list_cells
+    
+Enable và start service nova
+
+    systemctl enable openstack-nova-api.service openstack-nova-consoleauth.service \
+    openstack-nova-scheduler.service openstack-nova-conductor.service \
+    openstack-nova-novncproxy.service
+    
+    systemctl start openstack-nova-api.service openstack-nova-consoleauth.service \
+    openstack-nova-scheduler.service openstack-nova-conductor.service \
+    openstack-nova-novncproxy.service
+
+Kiểm tra cài đặt lại dịch vụ
+
+    openstack compute service list
+
+#### 3.3.4 Kiểm tra cấu hình Nova
+Xác định xem node `ops` có hỗ trợ ảo hóa hay không
+
+    egrep -c '(vmx|svm)' /proc/cpuinfo
+    
+- Nếu lệnh này return 1 hoặc lớn hơn, thì node `ops` này hỗ trợ ảo hóa.
+- Nếu lệnh này return 0, thì node `ops` không hỗ trợ ảo hóa, cần sửa section `[libvirt]` trong file `/etc/nova/nova.conf`:
+
+        [libvirt]
+        virt_type = qemu
+
+Enable và start dịch vụ Compute:
+
+    systemctl enable libvirtd.service openstack-nova-compute.service
+    systemctl start libvirtd.service openstack-nova-compute.service
+    
+Kiểm tra node compute `ops` vừa tạo:
+
+    admin-openrc
+    openstack hypervisor list
 ### 3.3 Cài đặt Neutron (Network Service)
 
 ### 3.3 Cài đặt Cinder (Block Service)
