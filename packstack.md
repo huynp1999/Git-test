@@ -40,12 +40,20 @@ Nova
 
 cat << EOF > nova-ceph.xml
 <secret ephemeral="no" private="no">
-<uuid>f8039eb5-7295-41ab-80ef-330b4c4dd369</uuid>
+<uuid>e3fdf24b-e8cb-440d-908f-2faa02dcb639</uuid>
 <usage type="ceph">
 <name>client.nova secret</name>
 </usage>
 </secret>
 EOF
 
-virsh secret-set-value --secret f8039eb5-7295-41ab-80ef-330b4c4dd369 --base64 $(cat /root/client.nova)
+virsh secret-set-value --secret e3fdf24b-e8cb-440d-908f-2faa02dcb639 --base64 $(cat /root/client.nova)
 
+
+
+
+tạo vm
+openstack server create \
+    --flavor m1.tiny --image ccf907e5-70b6-431a-ac5d-4f20351bbfea --network 10.1.1.69 \
+    --block-device source=volume,id=ccb1dac3-5f4b-412c-a015-e9673752bfc5,dest=volume,shutdown=preserve \
+    --wait test-server
