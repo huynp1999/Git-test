@@ -10,7 +10,8 @@ yum update -y
 
 cat > ceph-secret.xml <<EOF
 <secret ephemeral='no' private='no'>
-<uuid>f3e54e0c-dc0d-4275-969c-ed3d9c99cf6f</uuid>
+<uuid>f3e54e0c-dc0d-4275-969c-ed3d9c99cf6f
+      f3e54e0c-dc0d-4275-969c-ed3d9c99cf6f</uuid>
 <usage type='ceph'>
 	<name>client.cinder secret</name>
 </usage>
@@ -30,7 +31,7 @@ rbd_flatten_volume_from_snapshot = false
 rbd_max_clone_depth = 5
 rbd_store_chunk_size = 4
 rados_connect_timeout = -1
-rbd_user = cinder
+rbd_user = volumes #not cinder like some docs
 rbd_secret_uuid = f3e54e0c-dc0d-4275-969c-ed3d9c99cf6f
 report_discard_supported = true
 
