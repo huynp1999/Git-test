@@ -53,7 +53,10 @@ virsh secret-set-value --secret e3fdf24b-e8cb-440d-908f-2faa02dcb639 --base64 $(
 
 
 tạo vm
-openstack server create \
-    --flavor m1.tiny --image ccf907e5-70b6-431a-ac5d-4f20351bbfea --network 10.1.1.69 \
-    --block-device source=volume,id=ccb1dac3-5f4b-412c-a015-e9673752bfc5,dest=volume,shutdown=preserve \
-    --wait test-server
+
+tạo keypair:
+
+	openstack keypair create --public-key=~/.ssh/id_rsa.pub adminkey
+
+tạo security groups
+	openstack server create --flavor m1.medium --image ccf907e5-70b6-431a-ac5d-4f20351bbfea --network c12e8f1a-c4be-4f24-9bb8-a8f9923f4b12 --security-group 843abb3d-4f8f-429c-bfc6-f9c064c9cb65 --key-name adminkey --block-device uuid=627880cc-a2b4-424a-a3a0-432dcef81567 --wait test-server
