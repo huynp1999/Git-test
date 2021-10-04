@@ -1,7 +1,19 @@
 ---
 - hosts: all
-  yum:
-    name: epel-release
-    state: present
-  
-    
+  tasks:
+    - name: install epel
+      yum:
+        name: epel-release
+        state: present
+    - name: copy ceph.repo
+      cp:
+        source: ceph.repo
+        dest: /etc/yum.repos.d/
+    - name: upgrade all packages
+      yum:
+        name: *
+        state: latest
+    - name: install ceph
+      yum:
+        name: ceph
+        state: present
