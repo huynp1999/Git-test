@@ -16,6 +16,32 @@
     echo "ansibledeploy ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansibledeploy
     chmod 0440 /etc/sudoers.d/ansibledeploy
     
+    cat <<EOF> /etc/yum.repos.d/ceph.repo
+    [ceph]
+    name=Ceph packages for $basearch
+    baseurl=https://download.ceph.com/rpm-nautilus/el8/x86_64/
+    enabled=1
+    priority=2
+    gpgcheck=1
+    gpgkey=https://download.ceph.com/keys/release.asc
+
+    [ceph-noarch]
+    name=Ceph noarch packages
+    baseurl=https://download.ceph.com/rpm-nautilus/el8/noarch
+    enabled=1
+    priority=2
+    gpgcheck=1
+    gpgkey=https://download.ceph.com/keys/release.asc
+
+    [ceph-source]
+    name=Ceph source packages
+    baseurl=https://download.ceph.com/rpm-nautilus/el8/SRPMS
+    enabled=0
+    priority=2
+    gpgcheck=1
+    gpgkey=https://download.ceph.com/keys/release.asc
+    EOF
+    
     
     cat << EOF >> ceph.conf
     public network = 10.10.10.0/24
