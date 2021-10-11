@@ -11,7 +11,12 @@
     |     |      |
     
     sed -i 's/prohibit-password/yes/g; s/#PermitRootLogin/PermitRootLogin/g;' /etc/ssh/sshd_config && systemctl restart ssh[d]
-
+    
+    useradd ansibledeploy; echo '123' | passwd ansibledeploy --stdin
+    echo "ansibledeploy ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansibledeploy
+    chmod 0440 /etc/sudoers.d/ansibledeploy
+    
+    
     cat << EOF >> ceph.conf
     public network = 10.10.10.0/24
     cluster network = 10.10.11.0/24
