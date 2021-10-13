@@ -39,10 +39,17 @@ Kiểm tra:
     java -version
     
 ## 2. Deploy Scaleio
-Scaleio sẽ được deploy qua một installer gateway. Cài đặt packet gateway dành cho Centos:
+Scaleio sẽ được deploy qua một installer gateway.
 
-    GATEWAY_ADMIN_PASSWORD=<new_GW_admin_password> rpm -U EMC-ScaleIO-gateway-2.5-0.254.x86_64.rpm --nodeps
+Cài đặt packet gateway dành cho Centos:
+
+    # GATEWAY_ADMIN_PASSWORD=<new_GW_admin_password> rpm -U EMC-ScaleIO-gateway-2.5-0.254.x86_64.rpm --nodeps
+    
+Cài đặt packet gateway dành cho Ubuntu:
+    
+    # apt install bitutils -y
+    # GATEWAY_ADMIN_PASSWORD=<new_GW_admin_password> dpkg -i EMC-ScaleIO-gateway-2.5-<build>.X.deb
     
 Nếu gặp lỗi `Cannot query status of the EMC ScaleIO Gateway.` thì cần xem lại các cài đặt java, cần đúng 1.8.
 
-    
+
