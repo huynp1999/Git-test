@@ -87,10 +87,9 @@ Nhập IP của server manage, username mặc định *admin* và password đã 
     
 Thêm một SDS device:
 
-    # scli --add_sds_device --sds_ip <IP> --protection_domain_name default --storage_pool_name default --device_path /dev/sda
+    # scli --add_sds_device --sds_ip <IP> --protection_domain_name default --storage_pool_name default --device_path /dev/sdX
     
-Nếu chưa có pool được tạo mặc định:
+Tạo và map volume với openstack:
 
-Add a volume:
-scli --add_volume --protection_domain_name default
-     --storage_pool_name default --size_gb <SIZE> --volume_name <NAME>
+    # scli --add_volume --protection_domain_name default-storage_pool_name default --size_gb <SIZE> --volume_name <NAME>
+    # scli --map_volume_to_sdc --volume_name <NAME> --sdc_ip <IP>
