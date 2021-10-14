@@ -39,6 +39,7 @@ Kiểm tra:
     java -version
     
 ## 2. Deploy Scaleio
+### Gateway
 Scaleio sẽ được deploy qua một installer gateway.
 
 Cài đặt packet gateway dành cho Centos:
@@ -52,4 +53,44 @@ Cài đặt packet gateway dành cho Ubuntu:
     
 Nếu gặp lỗi `Cannot query status of the EMC ScaleIO Gateway.` thì cần xem lại các cài đặt java, cần đúng 1.8.
 
+Truy cập vào gateway theo ip của host:
+### Deploy cluster
+Ở tab **Packages**, upload các package theo yêu cầu (MDM, SDS, SDC, LIA).
 
+Ở tab **Install**, chọn phương thức deploy (ở đây là cluster 3 node: 1 Master MDM, 1 Slave MDM, và 1 TieBreaker MDM)
+- Cấu hình password của thành phần LIA và MDM, IP của các host và password root.
+
+Sau khi **Start installation**, ở tab **Monitor** cho phép theo dõi quá trình install và config các thành phần.
+- Làm theo từng bước **Start upload phase** -> **Start install phase** -> **Start configure phase**
+- Lưu ý ở mỗi bước cần check trạng thái *completed* trước khi chuyển sang bước kế tiếp
+
+Nếu trạng thái *failed* xảy ra, thử *retry failed*. Hoặc purge các package *emc-scaleio* tại các node và cài lại.
+
+Khi tất cả được thành công sẽ có kết quả:
+
+### GUI
+Cài đặt gói GUI của Scalio:
+
+    # dpkg -i EMC-ScaleIO-gui-2.5-0.254.deb
+
+Khởi động GUI:
+
+    # cd /opt/emc/scaleio/gui/
+    # ./run.sh
+
+Nhập IP của server manage, username mặc định *admin* và password đã cầu hình ở phần deploy:
+
+### CLI
+Đăng nhập bằng cli:
+
+    # scli --login --username admin --password <password>
+    
+Thêm một SDS device:
+
+    # scli --add_sds_device --sds_ip <IP> --protection_domain_name default --storage_pool_name default --device_path /dev/sda
+    
+Nếu chưa có pool được tạo mặc định:
+
+Add a volume:
+scli --add_volume --protection_domain_name default
+     --storage_pool_name default --size_gb <SIZE> --volume_name <NAME>
