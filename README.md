@@ -11,6 +11,7 @@
     |     |      |
     
     sed -i 's/prohibit-password/yes/g; s/#PermitRootLogin/PermitRootLogin/g;' /etc/ssh/sshd_config && systemctl restart ssh[d]
+    echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
     
     useradd ansibledeploy; echo '123' | passwd ansibledeploy --stdin
     echo "ansibledeploy ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansibledeploy
