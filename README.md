@@ -1,5 +1,5 @@
     <img src="https://.png" alt="drawing" width="200"/>
-
+    g/^\(#\|$\)/d
 
     |   |  | |
     | --- |:------:|:-----:|
