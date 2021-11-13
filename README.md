@@ -78,7 +78,7 @@ _nghieng_
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/RAID_0.svg/800px-RAID_0.svg.png" alt="drawing" width="200"/>
 
 ## Link
-[google](google.com)
+[google](https://google.com)
 
 ## Code
 ```
