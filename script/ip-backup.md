@@ -61,7 +61,7 @@ DOMAIN=localdomain
 VLAN=yes
 #NM_CONTROLLED=no
 MTU=9000
-ip link set bond0 txqueuelen 10000
+ip link set bond0.604 txqueuelen 10000
 EOF
 
 cat << EOF > /etc/sysconfig/network-scripts/ifcfg-bond0.79
@@ -74,7 +74,7 @@ NETMASK=255.255.255.0
 VLAN=yes
 #NM_CONTROLLED=no
 MTU=9000
-ip link set bond0 txqueuelen 10000
+ip link set bond0.79 txqueuelen 10000
 EOF
 
 cat << EOF > /etc/sysconfig/network-scripts/ifcfg-bond0.82
@@ -87,11 +87,13 @@ NETMASK=255.255.255.0
 VLAN=yes
 #NM_CONTROLLED=no
 MTU=9000
-ip link set bond0 txqueuelen 10000
+ip link set bond0.82 txqueuelen 10000
 EOF
 
 ifdown $e1; ifup $e1
 ifdown $e2; ifup $e2
 
 ifdown bond0.604; ifup bond0.604
+ifdown bond0.79; ifup bond0.79
+ifdown bond0.82; ifup bond0.82
 systemctl restart NetworkManager
