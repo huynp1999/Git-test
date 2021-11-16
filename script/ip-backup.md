@@ -1,9 +1,11 @@
 #!/bin/bash -x
-# bash script CP1 CP2 ipvlan604
+# bash script CP1 CP2 ipvlan604 ipvlan79 ipvlan82
 
 e1=$1
 e2=$2
 ip1=$3
+ip2=$4
+ip3=$5
 
 echo "bonding" >> /etc/modules-load.d/bonding.conf
 modprobe --first-time bonding
@@ -46,19 +48,46 @@ MTU=9000
 ip link set bond0 txqueuelen 10000
 EOF
 
-
 cat << EOF > /etc/sysconfig/network-scripts/ifcfg-bond0.604
-DEVICE=bond0.3007
-NAME=bond0.3007
+DEVICE=bond0.604
+NAME=bond0.604
 BOOTPROTO=none
 ONPARENT=yes
-IPADDR=$ip2
+IPADDR=$ip1
 NETMASK=255.255.255.224
 GATEWAY=172.31.3.65
 DNS1=8.8.8.8
 DOMAIN=localdomain
 VLAN=yes
 #NM_CONTROLLED=no
+MTU=9000
+ip link set bond0 txqueuelen 10000
+EOF
+
+cat << EOF > /etc/sysconfig/network-scripts/ifcfg-bond0.79
+DEVICE=bond0.79
+NAME=bond0.79
+BOOTPROTO=none
+ONPARENT=yes
+IPADDR=$ip2
+NETMASK=255.255.255.0
+VLAN=yes
+#NM_CONTROLLED=no
+MTU=9000
+ip link set bond0 txqueuelen 10000
+EOF
+
+cat << EOF > /etc/sysconfig/network-scripts/ifcfg-bond0.82
+DEVICE=bond0.82
+NAME=bond0.82
+BOOTPROTO=none
+ONPARENT=yes
+IPADDR=$ip3
+NETMASK=255.255.255.0
+VLAN=yes
+#NM_CONTROLLED=no
+MTU=9000
+ip link set bond0 txqueuelen 10000
 EOF
 
 ifdown $e1; ifup $e1
