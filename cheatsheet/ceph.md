@@ -5,11 +5,19 @@ ceph osd crush set-device-class hdd osd.0
 ceph osd crush rm-device-class osd.0
 ```
 
+## Bucket
+```
+ceph osd crush add-bucket root data
+ceph osd crush move hdd-data root=data
+ceph osd crush remove default
+```
+
 ## Rule
 ```
 ceph osd crush rule dump
 ceph osd crush rule create-replicated data-hdd data host
                                       <rule>   <root> <failure-domain>
+ceph osd crush rule rm replicated_rule
 ```
 
 ## Pool
