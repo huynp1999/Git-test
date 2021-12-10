@@ -1,0 +1,8 @@
+sudo mv /usr/bin/terminator /usr/bin/terminator.SAVE
+
+cat <<TERMINATOR > /tmp/terminator
+sh -c "DBUS_SESSION_BUS_ADDRESS='' /usr/share/terminator/terminator"
+TERMINATOR
+
+chmod 755 /tmp/terminator
+sudo mv /tmp/terminator /usr/bin
