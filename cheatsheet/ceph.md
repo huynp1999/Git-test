@@ -15,8 +15,8 @@ ceph osd crush remove default
 ## Rule
 ```
 ceph osd crush rule dump
-ceph osd crush rule create-replicated data-hdd data host
-                                      <rule>   <root> <failure-domain>
+ceph osd crush rule create-replicated data-hdd   data    host
+                                      <rule>     <root>  <failure-domain>
 ceph osd crush rule rm replicated_rule
 ```
 
