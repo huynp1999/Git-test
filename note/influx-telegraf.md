@@ -1,0 +1,41 @@
+wget https://dl.influxdata.com/influxdb/releases/influxdb-1.8.10.x86_64.rpm
+yum -y localinstall influxdb-1.8.10.x86_64.rpm -y
+systemctl start telegraf
+systemctl enable telegraf
+systemctl status influxdb
+influx -version
+netstat -plntu | grep -e 8088 -e 8086
+
+vi /etc/influxdb/influxdb.conf
+[http]
+enabled = true
+flux-enabled = true
+bind-address = ":8086"
+log-enabled = true
+
+influx
+create database telegraf
+create user telegraf with password '123' with all privileges
+show databases
+show users
+exit
+----------------------------------------------------------------------------
+wget https://dl.influxdata.com/telegraf/releases/telegraf-1.20.4-1.x86_64.rpm
+yum localinstall telegraf-1.20.4-1.x86_64.rpm -y
+systemctl start telegraf
+systemctl enable telegraf
+systemctl status telegraf
+telegraf --version
+
+vi /etc/telegraf/telegraf.conf
+
+hostname = "vita1"
+[[outputs.influxdb]]
+  urls = ["http://123.31.11.97:8086"]
+  database = "telegraf"
+  username = "telegraf"
+  password = "123"
+[[inputs.net]]  
+  interfaces = ["ens1f0", "ens1f1", "bond0.79", "bond0.82", "bond0.604"]
+  
+systemctl restart telegraf
