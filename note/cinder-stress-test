@@ -1,0 +1,13 @@
+#ops host
+for i in {101..105}; do openstack volume create --size 50 --image ubuntu-20.04 --availability-zone nova ubuntu$i && sleep 70 && openstack server create --volume ubuntu$i --flavor 2c2g --key-name huynnp --security-group basic --nic net-id=8ee3ba1f-3cea-44b5-8b26-13c1bd75d5a1 --availability-zone nova test$i; done
+
+#local host
+for i in {61..90}; do ssh-keygen -f "/home/huy/.ssh/known_hosts" -R "192.168.54.$i"; done
+for i in {61..90}; do ssh ubuntu@192.168.54.$i 'sudo cp /home/ubuntu/.ssh/authorized_keys /root/.ssh/ && echo host$i'; done
+for i in {61..90}; do ssh root@192.168.54.$i 'apt update -y && echo host$i'; done
+for i in {61..90}; do ssh root@192.168.54.$i 'apt update -y && echo host$i'; done
+for i in {61..90}; do ssh root@192.168.54.$i 'apt update fio -y && echo host$i'; done
+for i in {61..90}; do scp fio.sh root@192.168.54.$i:/root/ && echo $i; done
+for i in {61..90}; do scp logfile root@192.168.54.$i:/root/ && echo $i; done
+for i in {61..90}; do ssh root@192.168.54.$i 'chmod 777 /root/fio.sh'; done
+for i in {61..90}; do ssh root@192.168.54.$i '/root/fio.sh &> /root/logfile &'; done
