@@ -53,6 +53,7 @@
     osd pool default min size = 1
     EOF
 
+    timedatectl set-timezone Asia/Ho_Chi_Minh
 #### aa
 ### a
 ##### a
