@@ -12,7 +12,7 @@ while true; do fio --randrepeat=1 --ioengine=libaio --direct=0 --gtod_reduce=1 -
 for i in {61..90}; do ssh-keygen -f "/home/huy/.ssh/known_hosts" -R "192.168.54.$i"; done
 for i in {61..90}; do ssh ubuntu@192.168.54.$i 'sudo cp /home/ubuntu/.ssh/authorized_keys /root/.ssh/ && echo host$i'; done
 for i in {61..90}; do ssh root@192.168.54.$i 'apt update -y && echo host$i'; done
-for i in {61..90}; do ssh root@192.168.54.$i 'apt update fio -y && echo host$i'; done
+for i in {61..90}; do ssh root@192.168.54.$i 'apt install fio -y' && echo host$i; done
 for i in {61..90}; do scp fio.sh root@192.168.54.$i:/root/ && echo $i; done
 for i in {61..90}; do scp logfile root@192.168.54.$i:/root/ && echo $i; done
 for i in {61..90}; do ssh root@192.168.54.$i 'chmod 777 /root/fio.sh'; done
