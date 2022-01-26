@@ -1,5 +1,6 @@
     <img src="https://.png" alt="drawing" width="200"/>
     g/^\(#\|$\)/d
+    timedatectl set-timezone Asia/Ho_Chi_Minh
 
     |   |  | |
     | --- |:------:|:-----:|
