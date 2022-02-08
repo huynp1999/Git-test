@@ -33,7 +33,17 @@ ceph osd pool delete testpool1 --yes-i-really-really-mean-it
 ceph osd pool set testpool1 pg_autoscale_mode on
 ceph config set global osd_pool_default_pg_autoscale_mode <mode>
 ``` 
+## Ceph tell
+```
+ceph tell 'osd.*' injectargs '--osd-max-backfills 5'
+```
 
+## Ceph config
+```
+ceph config dump
+ceph config set global osd_scrub_auto_repair true
+ceph config set global osd_pool_default_pg_autoscale_mode off
+```
 ## PG
 ```
 8 osd, 6 pool, rep size 2
