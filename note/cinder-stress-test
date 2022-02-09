@@ -1,5 +1,6 @@
 #ops host
-for i in {101..105}; do openstack volume create --size 50 --image ubuntu-20.04 --availability-zone nova ubuntu$i && sleep 70 && openstack server create --volume ubuntu$i --flavor 2c2g --key-name huynnp --security-group basic --nic net-id=8ee3ba1f-3cea-44b5-8b26-13c1bd75d5a1 --availability-zone nova test$i; done
+for i in {101..105}; do openstack volume create --size 50 --image ubuntu-20.04 --availability-zone nova ubuntu$i; done
+for i in {101..105}; do openstack server create --volume ubuntu$i --flavor 2c2g --key-name huynnp --security-group basic --nic net-id=8ee3ba1f-3cea-44b5-8b26-13c1bd75d5a1 --availability-zone nova test$i; done
 
 #local host
 
