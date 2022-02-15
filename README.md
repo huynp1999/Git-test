@@ -2,6 +2,10 @@
     g/^\(#\|$\)/d
     timedatectl set-timezone Asia/Ho_Chi_Minh
 
+    sudo sed -i -e "s|mirrorlist=|#mirrorlist=|g" /etc/yum.repos.d/CentOS-*
+    sudo sed -i -e "s|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g" /etc/yum.repos.d/CentOS-*
+
+
     |   |  | |
     | --- |:------:|:-----:|
     |     |      | |
@@ -10,6 +14,8 @@
     |     |      |
     |     |      |
     |     |      |
+    
+    
     
     sed -i 's/prohibit-password/yes/g; s/#PermitRootLogin/PermitRootLogin/g;' /etc/ssh/sshd_config && systemctl restart ssh[d]
     echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
