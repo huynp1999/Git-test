@@ -1,7 +1,7 @@
 wget https://dl.influxdata.com/influxdb/releases/influxdb-1.8.10.x86_64.rpm
 yum -y localinstall influxdb-1.8.10.x86_64.rpm -y
-systemctl start telegraf
-systemctl enable telegraf
+systemctl start influxdb
+systemctl enable influxdb
 systemctl status influxdb
 influx -version
 netstat -plntu | grep -e 8088 -e 8086
