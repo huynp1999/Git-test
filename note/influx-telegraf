@@ -20,7 +20,8 @@ show databases
 show users
 exit
 ----------------------------------------------------------------------------
-wget https://dl.influxdata.com/telegraf/releases/telegraf-1.20.4-1.x86_64.rpm
+deb: wget https://dl.influxdata.com/telegraf/releases/telegraf_1.20.4-1_amd64.deb
+rpm: wget https://dl.influxdata.com/telegraf/releases/telegraf-1.20.4-1.x86_64.rpm
 yum localinstall telegraf-1.20.4-1.x86_64.rpm -y
 systemctl start telegraf
 systemctl enable telegraf
