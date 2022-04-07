@@ -7,7 +7,7 @@ ceph osd crush rm-device-class osd.0
 
 ## Bucket
 ```
-ceph osd crush add-bucket root data
+ceph osd crush add-bucket data root
 ceph osd crush move hdd-data root=data
 ceph osd crush remove default
 ```
