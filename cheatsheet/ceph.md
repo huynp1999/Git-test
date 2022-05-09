@@ -28,6 +28,15 @@ ceph osd pool create testpool1 128 128 replicated hdd-rule
 ceph osd pool delete testpool1 --yes-i-really-really-mean-it
 ```
 
+## RBD
+
+```
+rbd create disk02 --size 6G --image-feature layering -p rbdpool1
+rbd ls -l -p rbdpool1
+rbd map disk02 -p rbdpool1
+rbd showmapped
+```
+
 ## Autoscale
 ```
 ceph osd pool set testpool1 pg_autoscale_mode on
