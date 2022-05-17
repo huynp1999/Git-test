@@ -58,3 +58,12 @@ ceph config set global osd_pool_default_pg_autoscale_mode off
 8 osd, 6 pool, rep size 2
 PGs per OSD: (32×4×2+256×2×2)÷8
 ```
+
+## RGW
+```
+radosgw-admin user list
+radosgw-admin user info --uid=benchmark-user
+
+radosgw-admin bucket list
+radosgw-admin bucket list --bucket=testbucket | jq '.[] | .name'
+```
