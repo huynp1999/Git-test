@@ -66,4 +66,6 @@ radosgw-admin user info --uid=benchmark-user
 
 radosgw-admin bucket list
 radosgw-admin bucket list --bucket=testbucket | jq '.[] | .name'
+
+radosgw-admin key create --gen-access-key --gen-secret --subuser=backup-service:backup --key-type=s3
 ```
