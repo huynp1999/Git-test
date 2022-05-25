@@ -68,4 +68,7 @@ radosgw-admin bucket list
 radosgw-admin bucket list --bucket=testbucket | jq '.[] | .name'
 
 radosgw-admin key create --gen-access-key --gen-secret --subuser=backup-service:backup --key-type=s3
+
+rados -p default.rgw.buckets.data ls -
+rados -p default.rgw.buckets.data get gach/object file.txt
 ```
