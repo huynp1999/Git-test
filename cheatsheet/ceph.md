@@ -44,7 +44,7 @@ ceph config set global osd_pool_default_pg_autoscale_mode <mode>
 ``` 
 ## Ceph tell
 ```
-ceph tell 'osd.*' injectargs '--osd-max-backfills 5'
+ceph tell 'osd.*' injectargs --osd-max-backfills=2 --osd-recovery-max-active=6
 ```
 
 ## Ceph config
