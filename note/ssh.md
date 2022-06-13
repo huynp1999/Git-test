@@ -3,6 +3,5 @@
 ```
 yum install xclip -y
 echo `hostname -I` `hostname` >> /etc/hosts
+echo "alias cplastcmd='history 2 | cut -c 8- | head -n 1 | xclip -selection clipboard'" >> ~/.bashrc
 ```
-
-`alias xc=fc -ln -1 | awk '{$1=$1}1' | xclip -selection clipboard`
