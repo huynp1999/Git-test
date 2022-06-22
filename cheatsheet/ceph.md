@@ -73,3 +73,9 @@ radosgw-admin key create --gen-access-key --gen-secret --subuser=backup-service:
 rados -p default.rgw.buckets.data ls -
 rados -p default.rgw.buckets.data get gach/object file.txt
 ```
+
+## FS
+```
+ceph fs new cephfs meta data
+mount -t ceph 10.5.90.56:/ /mnt/cephfs-test/ -o name=admin,secret=AQDYlbJitZscHRAABHSiC2YZ1ma50IXf5WStgg==
+```
