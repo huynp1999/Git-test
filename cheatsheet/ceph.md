@@ -78,4 +78,6 @@ rados -p default.rgw.buckets.data get gach/object file.txt
 ```
 ceph fs new cephfs meta data
 mount -t ceph 10.5.90.56:/ /mnt/cephfs-test/ -o name=admin,secret=AQDYlbJitZscHRAABHSiC2YZ1ma50IXf5WStgg==
+
+ceph tell mds.ceph-nfs-03 client ls | jq "." | less  # query client
 ```
