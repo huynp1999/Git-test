@@ -7,4 +7,4 @@ nếu chưa hoặc bị fw chặn:
 
 byobu new windows + command:
 
-    byobu new-window -n vm1 ssh ubuntu@192.168.54.85 -t 'sudo -s'
+    j=1 ;for i in 85 72 82 73 69; do byobu new-window -n vm$j ssh ubuntu@192.168.54.$i -t 'sudo -s'; (( j += 1 ));done
