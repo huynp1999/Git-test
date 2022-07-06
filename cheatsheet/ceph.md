@@ -82,3 +82,9 @@ mount -t ceph 10.5.90.56:/ /mnt/cephfs-test/ -o name=admin,secret=AQDYlbJitZscHR
 ceph tell mds.ceph-nfs-03 client ls | jq "." | less  # query client
 ceph tell mds.0 client evict id=4305 # evict
 ```
+
+## Stretch mode
+```
+ceph mon add ceph6 10.5.10.93 datacenter=site2
+
+```
