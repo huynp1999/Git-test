@@ -1,4 +1,5 @@
 wget https://dl.influxdata.com/influxdb/releases/influxdb-1.8.10.x86_64.rpm
+wget https://dl.influxdata.com/influxdb/releases/influxdb_1.8.10_amd64.deb
 yum -y localinstall influxdb-1.8.10.x86_64.rpm -y
 systemctl start influxdb
 systemctl enable influxdb
