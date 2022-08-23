@@ -63,6 +63,7 @@ PGs per OSD: (32×4×2+256×2×2)÷8
 
 ## RGW
 ```
+radosgw-admin user create --uid=huy --display-name="huy user"
 radosgw-admin user list
 radosgw-admin user info --uid=benchmark-user
 
