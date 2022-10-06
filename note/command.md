@@ -10,3 +10,7 @@ byobu new windows + command:
 ceph-deploy osd create:
 
     for i in `cat /etc/hosts | grep ceph| awk '{print $2}'`; do for j in b c; do ceph-deploy osd create --data /dev/vd$j $i; done; done
+
+mount.nfs: Stale file handle
+
+    umount /mnt
