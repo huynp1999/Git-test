@@ -71,6 +71,8 @@ radosgw-admin user info --uid=benchmark-user
 radosgw-admin bucket list
 radosgw-admin bucket list --bucket=testbucket | jq '.[] | .name'
 
+radosgw-admin bucket rm --bucket mps-cttcp-trash-2ec3d2fbb92c --purge-objects --max-concurrent-ios=2048 --bypass-gc
+
 radosgw-admin key create --gen-access-key --gen-secret --subuser=backup-service:backup --key-type=s3
 
 radosgw-admin caps add --uid=johndoe --caps="[users|buckets|metadata|usage|zone]=[*|read|write|read, write]"
