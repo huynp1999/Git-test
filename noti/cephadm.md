@@ -1,18 +1,5 @@
 # Role Cephadm Server
 
-About
-
-Là role chịu trách nhiệm
-
-- Triển khai cụm Ceph thông qua tool cephadm
-- Thay đổi các cấu hình của Ceph
-
-Role này cài đặt với hệ điều hành là Ubuntu 20.04
-
-Name
-
-Cephadm Server
-
 Inputs
 
 - File inventory để khai báo các hostname và IP, kèm theo chức năng của host đó trong cụm. File này có thể ở format yaml, JSON,…
@@ -21,9 +8,10 @@ File sẽ bao gồm:
     - hostname (trùng với hostname của server) và IP
 
 ```yaml
+rules: 2
 rule_name:
-  - abc: hdd
-  - xyz: ssd
+  - HDD1: hdd
+  - SSD1: ssd
 nodes:
   - name: ceph-mon-1
     bind_ip_address: 192.168.1.1
@@ -138,7 +126,9 @@ Process
     - Phần spec dùng để chỉ định add osd vào các device nằm trên các host vừa khai báo
         - `data_devices`: dùng để chỉ định add osd vào các device.
         Value mặc định `all: true`
-        - `crush_device_class: ssd` (optional) đối với các host chứa device là SSD thì bật option này lên
+        - `crush_device_class:` sẽ có giá trị là
+            - `ssd` đối với các host chứa có device_class là ssd
+            - `hdd` đối với các host chứa có device_class là hdd
         - `objectstore: bluestore` : option này mặc định luôn có
 
 ```yaml
