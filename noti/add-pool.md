@@ -1,23 +1,24 @@
 Inputs
 
-- `rules` (bắt buộc, mặc định = 1, tối đa = 2)
+- `rules` (bắt buộc, mặc định = `1`, tối đa = `2`)
 Số lượng rule
-- `rule_name`
-Bao gồm tên rule và device class của rule (mặc định = `HDD1: hdd`)
-    - (tùy chọn) thêm rule, giá trị có thể ví dụ:
+- `rule_info`
+Bao gồm `<rule_name>: <device_class>` (mặc định = `HDD1: hdd`)
     - lưu ý: nếu rule 1 có device_class là hdd thì device_class của rule 2 sẽ phải là ssd. Và ngược lại.
-
-```
-HDD1: hdd
-SSD1: ssd
-```
-
-- `pool_name` (bắt buộc)
-Luôn có mặc định 2 pool là HDD1 và glances theo rule 1. Nếu `rules` > 1 thì sẽ có thêm một pool thứ 3, pool này sẽ theo rule 2.
-Như vậy tên các pool sẽ phải ghi theo thứ tự: glance pool, cinder pool[, extra pool]
-  - ví dụ: `glances, HDD1, SSD1`
-
-- `pg_num` (bắt buộc, mặc định = `128`)
+    - ví dụ:
+    
+    ```yaml
+    rules: 2
+    rule_name:
+    	- HDD1: hdd
+    	- SSD1: ssd
+    ```
+    
+- `pool_name` (bắt buộc)
+Luôn có mặc định 2 pool là glances và HDD1 theo rule 1. Nếu `rules` > 1 thì sẽ có thêm một rule thứ 2 nữa —> thêm 1 pool theo rule 2.
+Như vậy tên các pool sẽ phải ghi theo thứ tự: glance pool, cinder pool[, cinder extra pool]
+    - ví dụ: `glances, HDD1, SSD1`
+- `pg_num` (bắt buộc, mặc định = `128`)
 Số lượng pg của các pool
 
 Process
