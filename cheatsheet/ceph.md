@@ -58,6 +58,8 @@ ceph osd reweight osd.111 0
 ceph config dump
 ceph config set global osd_scrub_auto_repair true
 ceph config set global osd_pool_default_pg_autoscale_mode off
+
+ceph daemon mon.stor1 config show
 ```
 ## PG
 ```
