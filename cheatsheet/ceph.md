@@ -108,10 +108,12 @@ ceph-objectstore-tool --op remove --data-path /var/lib/ceph/osd/ceph-6 --pgid 17
 
 ceph-objectstore-tool --data-path /var/lib/ceph/osd/ceph-1 --pgid 17.0 --op mark-complete --no-mon-config
 ```
+https://tracker.ceph.com/issues/57940
+
 
 Export pg data:
 ```
 ceph-objectstore-tool --data-path /var/lib/ceph/osd/ceph-441 --no-mon-config --pgid 6.fcc --op export --file ./pg6ffc
-
-https://lists.ceph.io/hyperkitty/list/ceph-users@ceph.io/thread/7AWMDL5CWKW2WBHM7TVIRLXYJSNS5EIX/
 ```
+https://lists.ceph.io/hyperkitty/list/ceph-users@ceph.io/thread/7AWMDL5CWKW2WBHM7TVIRLXYJSNS5EIX/
+
