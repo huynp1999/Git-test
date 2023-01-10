@@ -100,3 +100,18 @@ ceph tell mds.0 client evict id=4305 # evict
 ceph mon add ceph6 10.5.10.93 datacenter=site2
 
 ```
+
+## ceph-objectstore-tool 
+Xóa pg và sang node còn lại mark complete
+```
+ceph-objectstore-tool --op remove --data-path /var/lib/ceph/osd/ceph-6 --pgid 17.0 --force
+
+ceph-objectstore-tool --data-path /var/lib/ceph/osd/ceph-1 --pgid 17.0 --op mark-complete --no-mon-config
+```
+
+Export pg data:
+```
+ceph-objectstore-tool --data-path /var/lib/ceph/osd/ceph-441 --no-mon-config --pgid 6.fcc --op export --file ./pg6ffc
+
+https://lists.ceph.io/hyperkitty/list/ceph-users@ceph.io/thread/7AWMDL5CWKW2WBHM7TVIRLXYJSNS5EIX/
+```
