@@ -20,6 +20,13 @@ ceph orch ps
 ceph orch daemon rm mon.ceph-adm-3 --force
 ```
 
+## Config
+
+```
+ceph config set mon public_network
+https://documentation.suse.com/ses/7/html/ses-all/cha-ceph-configuration.html
+```
+
 ## Cephadm
 
 ```
