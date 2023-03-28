@@ -23,7 +23,8 @@ ceph orch daemon rm mon.ceph-adm-3 --force
 ## Config
 
 ```
-ceph config set mon public_network
+ceph config set mon public_network x.x.x.x/24
+ceph config set client.rgw.rgw.last-ceph1.xgalry rgw_enable_usage_log true
 https://documentation.suse.com/ses/7/html/ses-all/cha-ceph-configuration.html
 ```
 
