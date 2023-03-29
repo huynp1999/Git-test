@@ -45,3 +45,9 @@ ceph orch ls --export > cluster.yaml
 UPDATING SERVICE SPECIFICATIONS
 ceph orch apply -i myservice.yaml [--dry-run]
 ```
+
+## Log
+
+```
+ceph log last 100 info cephadm
+```
