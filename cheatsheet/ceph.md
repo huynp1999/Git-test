@@ -28,6 +28,14 @@ ceph osd pool create testpool1 128 128 replicated hdd-rule
 ceph osd pool delete testpool1 --yes-i-really-really-mean-it
 ```
 
+## Erasure code
+
+```
+ceph osd erasure-code-profile set ecroot-profile m=1 crush-root=ecroot
+ceph osd crush rule create-erasure ecrule ecroot-profile
+ceph osd pool create default.rgw.archive.data erasure ecroot-profile ecrule
+```
+
 ## RBD
 
 ```
