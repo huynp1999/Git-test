@@ -43,6 +43,12 @@ rbd create disk02 --size 6G --image-feature layering -p rbdpool1
 rbd ls -l -p rbdpool1
 rbd map disk02 -p rbdpool1
 rbd showmapped
+
+rbd children -a images/3fe29499-7134-49af-9d29-53e62e36b31d@snap
+rbd trash rm volumes/525ba2db99fbdb --force
+rbd snap unprotect images/3fe29499-7134-49af-9d29-53e62e36b31d@snap
+rbd snap rm images/3fe29499-7134-49af-9d29-53e62e36b31d@snap
+rbd rm images/3fe29499-7134-49af-9d29-53e62e36b31d
 ```
 
 ## Autoscale
