@@ -97,6 +97,8 @@ radosgw-admin key create --gen-access-key --gen-secret --subuser=backup-service:
 
 radosgw-admin caps add --uid=johndoe --caps="[users|buckets|metadata|usage|zone]=[*|read|write|read, write]"
 
+radosgw-admin quota set --quota-scope=user --uid=myuser --max-size=500G
+
 rados -p default.rgw.buckets.data ls -
 rados -p default.rgw.buckets.data get gach/object file.txt
 ```
