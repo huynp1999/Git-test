@@ -31,9 +31,12 @@ ceph osd pool delete testpool1 --yes-i-really-really-mean-it
 ## Erasure code
 
 ```
-ceph osd erasure-code-profile set ecroot-profile m=1 crush-root=ecroot
+ceph osd erasure-code-profile set ecroot-profile k=3 m=2 crush-root=ecroot
+# cần đổi minsize = 3 thì mới fail đc 2 node
 ceph osd crush rule create-erasure ecrule ecroot-profile
 ceph osd pool create default.rgw.archive.data erasure ecroot-profile ecrule
+
+ceph osd pool set rbdpool1 allow_ec_overwrites true
 ```
 
 ## RBD
