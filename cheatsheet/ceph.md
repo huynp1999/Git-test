@@ -93,6 +93,7 @@ radosgw-admin user info --uid=benchmark-user
 
 radosgw-admin bucket list
 radosgw-admin bucket list --bucket=testbucket | jq '.[] | .name'
+link bucket: https://stackoverflow.com/questions/67943759/migrate-ceph-buckets-to-new-user-with-zero-downtime
 
 radosgw-admin bucket rm --bucket mps-cttcp-trash-2ec3d2fbb92c --purge-objects --max-concurrent-ios=2048 --bypass-gc
 
