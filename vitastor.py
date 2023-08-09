@@ -31,6 +31,7 @@ import json
 import math
 import os
 import tempfile
+from datetime import datetime
 
 from castellan import key_manager
 from oslo_config import cfg
@@ -535,9 +536,9 @@ class VitastorDriver(driver.CloneableImageVD,
             raise exception.VolumeIsBusy(volume_name = vol_name)
         
         # WORKAROUND: Temporarily skip the clear data/etcd step => store inode id => remove later in backend
-
+        current_dateTime = datetime.now()
         count_file = open("/var/log/cinder/count.txt", "a") # open file in append mode
-        count_file.write("vitastor-cli rm-data --pool " + kv['value']['pool_id'] + " --inode " + str(kv['value']['id']) + " --iodepth 8 --progress 1; etcdctl --endpoints=" + self.configuration.vitastor_etcd_address + " del /vitastor/config/inode/" + kv['value']['pool_id'] + "/" + str(kv['value']['id']) + "\n") # write rm-data & etcd del commands to file
+        count_file.write("vitastor-cli rm-data --pool " + kv['value']['pool_id'] + " --inode " + str(kv['value']['id']) + " --iodepth 8 --progress 1; etcdctl --endpoints=" + self.configuration.vitastor_etcd_address + " del /vitastor/config/inode/" + kv['value']['pool_id'] + "/" + str(kv['value']['id']) + " #" + str(current_dateTime) + "\n") # write rm-data & etcd del commands to file
         #LOG.debug(self.cfg["etcd_address"])
         
         count_file.close()
