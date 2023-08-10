@@ -88,6 +88,7 @@ PGs per OSD: (32×4×2+256×2×2)÷8
 ```
 radosgw-admin user create --uid=huy --display-name="huy user" --access-key fooAccessKey --secret-key fooSecretKey
 radosgw-admin subuser create --uid huy --subuser huy3 --key-type s3
+ radosgw-admin subuser modify --uid huy --subuser huy3 --access full
 radosgw-admin user list
 radosgw-admin user info --uid=benchmark-user
 
