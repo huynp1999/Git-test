@@ -108,6 +108,23 @@ rados -p default.rgw.buckets.data ls -
 rados -p default.rgw.buckets.data get gach/object file.txt
 ```
 
+## Multi-region
+```
+
+radosgw-admin realm pull --url=http://10.3.53.18:80 --access-key=ZGAT2TYI0BG5IO2VB1GW --secret=VJg8isLnSnhANPBx9B3wOl1dwpCBrOhcqzdQCI6g
+radosgw-admin realm default --rgw-realm=vccorp
+
+radosgw-admin zonegroup create --rgw-zonegroup=hcm --endpoints=http://10.3.53.169:8080 --rgw-realm=ss-realm --default
+
+radosgw-admin zone create --url=http://10.3.53.169:8080  --rgw-zonegroup hcm --rgw-zone hcm-1
+radosgw-admin zone modify --rgw-zonegroup hcm --rgw-zone hcm-1 --access-key LJK7XJWZA6H7KELU36NX --secret kEkCJZ7XbOmN1XXSpybpGUdwVVd5ekw457RPyHfA
+radosgw-admin zone delete --rgw-zone default
+for i in `ceph osd pool ls | grep default.rgw`; do ceph osd pool delete $i $i --yes-i-really-really-mean-it; done
+
+radosgw-admin period update --commit
+systemctl restart ceph-radosgw@rgw.ceph4-8080.service
+```
+
 ## FS
 ```
 ceph fs new cephfs meta data
