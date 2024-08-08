@@ -104,6 +104,11 @@ radosgw-admin caps add --uid=johndoe --caps="[users|buckets|metadata|usage|zone]
 
 radosgw-admin quota set --quota-scope=user --uid=myuser --max-size=500G
 
+radosgw-admin bucket link --uid trash-delete-bucket --bucket odv-air-capture --bucket_id 17a4ce99-009e-40f2-a2d2-2afc218ebd9b.5005331700.1 --bucket-new-
+name
+
+radosgw-admin bucket reshard --bucket odv-air-capture --num-shards 20 --yes-i-really-mean-it
+
 rados -p default.rgw.buckets.data ls -
 rados -p default.rgw.buckets.data get gach/object file.txt
 ```
